@@ -82,11 +82,17 @@ appender.RANGERAUDIT.strategy.max = {{ hive_log_drfa_maxbackupindex }}
 loggers = NIOServerCnxn, ClientCnxnSocketNIO, DataNucleus, Datastore, JPOX, PerfLogger, AmazonAws, ApacheHttp
 {%- if enable_ranger_audit_log4j %}, xaaudit{% endif %}
 
-
 {% if enable_ranger_audit_log4j %}
-logger.xaaudit.name = xaaudit
-logger.xaaudit.level = INFO
-logger.xaaudit.appenderRef.RANGERAUDIT.ref = RANGERAUDIT
+
+ranger.logger=DEBUG,file,RANGERAUDIT
+log4j.logger.xaaudit=${ranger.logger}
+log4j.appender.RANGERAUDIT.File={{ ranger_audit_file }}
+log4j.appender.RANGERAUDIT.layout=org.apache.log4j.PatternLayout
+log4j.appender.RANGERAUDIT.layout.ConversionPattern={{ tdp_auditlog_layout_pattern }}
+log4j.appender.RANGERAUDIT=org.apache.log4j.RollingFileAppender
+log4j.appender.RANGERAUDIT.MaxFileSize=100MB
+log4j.appender.RANGERAUDIT.MaxBackupIndex=10
+
 {% endif %}
 
 logger.NIOServerCnxn.name = org.apache.zookeeper.server.NIOServerCnxn
